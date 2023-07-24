@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dependencies>
+    <!-- Android dependencies are specified under the "androidPackages" element.
+       Each "androidPackage" element contains the attributes of an Android
+       dependency (e.g AAR, JAR reference). -->
+    <androidPackages>
+        
+        <repositories>
+            <repository>https://repo.maven.apache.org/maven2</repository>
+        </repositories>
+        
+        <androidPackage spec="com.pollfish:pollfish-googleplay:6.1.6">
+        </androidPackage>
+        
+    </androidPackages>
+    <iosPods>
+        <iosPod name="Pollfish" version="6.2.3" minTargetSdk="9.0">
+            <sources>
+                <source>https://github.com/CocoaPods/Specs</source>
+            </sources>
+        </iosPod>
+    </iosPods>
+</dependencies>

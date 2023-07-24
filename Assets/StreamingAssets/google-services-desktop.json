@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "308123983338",
+    "firebase_url": "https://fruit-spear.firebaseio.com",
+    "project_id": "fruit-spear",
+    "storage_bucket": "fruit-spear.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:308123983338:android:26af8d16a32c7a16c06693",
+        "android_client_info": {
+          "package_name": "com.somtee.fruit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "308123983338-c3kq32n72e2qsg2r9kkrgkib0ck3il0n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJ0O5_4zydFS9_7PSuQlgmcxD0H_pgLNs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "308123983338-c3kq32n72e2qsg2r9kkrgkib0ck3il0n.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "308123983338-i3v7tkcq2v2kt3ia1kgqdb4ubmcdbalj.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.somtee.fruitspear"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
