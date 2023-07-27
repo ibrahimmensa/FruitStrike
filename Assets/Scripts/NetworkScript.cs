@@ -1183,26 +1183,55 @@ public class NetworkScript : MonoBehaviour
 		}
 				
 		if(!FruitUI.userID.Equals("") && myCash > 0){
-			
-			updateDataFunction(childDate, info).ContinueWith((task) => {
-			if (task.IsFaulted) {
-				foreach (var inner in task.Exception.InnerExceptions) {
-					if (inner is FunctionsException) {
-						var e = (FunctionsException) inner;
-						var code = e.ErrorCode;
-						//var message = e.ErrorMessage;
-						Debug.Log("Update Data Function Error: ");
+
+			int tempCash = 0;
+
+			StartCoroutine(GetTotalAmountOfCashFromTransactionHistory((myReturnValue) => {
+				tempCash = myReturnValue;
+
+                if (tempCash != -1)
+                {
+					ProtectedFloat temp = tempCash + money;
+
+					if (temp != myCash)
+                    {
+                        if (temp < myCash)
+                        {
+							Debug.Log("total balance is greater in amount than in transaction history, syncing...");
+							myCash = temp;
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("transactions records and total balance is synced!");
+                    }
+                }
+
+				updateDataFunction(childDate, info).ContinueWith((task) => {
+					if (task.IsFaulted)
+					{
+						foreach (var inner in task.Exception.InnerExceptions)
+						{
+							if (inner is FunctionsException)
+							{
+								var e = (FunctionsException)inner;
+								var code = e.ErrorCode;
+								//var message = e.ErrorMessage;
+								Debug.Log("Update Data Function Error: ");
+							}
+						}
 					}
-				}
-			} else {
-				string result = task.Result;
-				Debug.Log("Update Data Function Success: " + result);
-			}
-			});
-			
-			
-			PlayerPrefs.SetInt("green",1);
-			Debug.Log("Finished Deploying Update Data Function");
+					else
+					{
+						string result = task.Result;
+						Debug.Log("Update Data Function Success: " + result);
+					}
+				});
+
+
+				PlayerPrefs.SetInt("green", 1);
+				Debug.Log("Finished Deploying Update Data Function");
+			}));
 		
         }else
 			checkError();	
@@ -1215,7 +1244,7 @@ public class NetworkScript : MonoBehaviour
 			
 	  Debug.Log("Calling Function - Update Data");
 	  var data = new Dictionary<string, object>();
-	  
+
 	  float a = myCash;
 	  int b = money;
 	  int c = coins;
@@ -1259,7 +1288,62 @@ public class NetworkScript : MonoBehaviour
 		return (string) task.Result.Data;
 	  });
 	}
-	
+
+	public static IEnumerator GetTotalAmountOfCashFromTransactionHistory(System.Action<int> callback)
+	{
+
+		int cashSumFromTransactionHistory = 0;
+
+		var DBTask = reference.Child("users").Child(FruitUI.userID).Child("transactions").GetValueAsync();
+
+		yield return new WaitUntil(predicate: () => DBTask.IsCompleted);
+
+		if (DBTask.Exception != null)
+		{
+			Debug.Log("Error retreiving Transaction List");
+			callback(-1);
+		}
+		else
+		{
+			DataSnapshot snapshot = DBTask.Result;
+
+			if (snapshot.Exists)
+			{
+
+				//Debug.Log("There are " + snapshot.ChildrenCount + " previous Transactions");
+
+				foreach (var child in snapshot.Children)
+				{
+					string info = child.Child("info").GetValue(false).ToString();
+
+					string[] split = info.Split(' ');
+
+					if (info.Contains("Withdrawal"))
+					{
+						int cashFromCurrentTransaction = int.Parse(split[2]);
+
+						cashSumFromTransactionHistory -= cashFromCurrentTransaction;
+					}
+					else
+					{
+						int cashFromCurrentTransaction = int.Parse(split[0]);
+
+						cashSumFromTransactionHistory += cashFromCurrentTransaction;
+					}
+				}
+
+				callback(cashSumFromTransactionHistory);
+
+			}
+            else
+            {
+				callback(0);
+			}
+
+        }
+
+	}
+
 	private void updateTournament(string id, string status, int plays){
 		updateTournamentFunction(id, status, plays).ContinueWith((task) => {
 			if (task.IsFaulted) {

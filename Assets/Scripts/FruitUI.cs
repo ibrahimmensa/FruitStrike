@@ -4,6 +4,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using OPS.AntiCheat.Field;
 
 public class FruitUI : MonoBehaviour
 {
@@ -219,7 +220,31 @@ public class FruitUI : MonoBehaviour
 	}
 
     public void openWithdrawPanel(){
-        playButtonSound();
+
+        StartCoroutine(NetworkScript.GetTotalAmountOfCashFromTransactionHistory((myReturnValue) =>
+        {
+            int tempCash = myReturnValue;
+
+            if (tempCash != -1)
+            {
+                ProtectedFloat temp = tempCash + NetworkScript.money;
+
+                if (temp != NetworkScript.myCash)
+                {
+                    if (temp < NetworkScript.myCash)
+                    {
+                        Debug.Log("total balance is greater in amount than in transaction history, syncing...");
+                        NetworkScript.myCash = temp;
+                    }
+                }
+                else
+                {
+                    Debug.Log("transactions records and total balance is synced!");
+                }
+            }
+        }));
+
+            playButtonSound();
 
         if(!userName.Equals("")){
             withdrawPanel.SetActive(true);
